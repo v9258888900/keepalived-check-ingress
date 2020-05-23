@@ -1,0 +1,10 @@
+---
+- name: Install parser JSON
+  yum:
+    name: jq
+    state: present
+
+- name: Install VRRP keepalived
+  yum:
+    name: keepalived
+    state: present

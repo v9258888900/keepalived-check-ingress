@@ -1,0 +1,3 @@
+---
+path_check_script: /etc/keepalived
+vip_ipaddress: <vip_address> # Example: 192.168.0.100

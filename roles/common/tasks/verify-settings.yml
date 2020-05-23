@@ -1,0 +1,15 @@
+---
+- name: Stop if either k8s-master, keepalived-node is empty
+  assert:
+    that: groups.get('{{ item }}')
+  with_items:
+    - k8s_master
+    - keepalived_node
+
+- name: Stop if not RedHAT or Centos
+  assert:
+    that: ansible_distribution in ['RedHat', 'CentOS']
+
+- name: Stop if the number of keepalived-hosts is less than two
+  assert:
+    that: groups.keepalived_node|length <= 2

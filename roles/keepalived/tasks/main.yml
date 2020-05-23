@@ -1,0 +1,29 @@
+---
+#- name:
+#  debug:
+#    msg: "[Worker] K8S_TOKEN_HOLDER K8S token is {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
+
+- name: Add the user 'keepalived_script'
+  user:
+    name: keepalived_script
+    comment: keepalived script  
+
+- name: Copy config keepalived.conf
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    backup: yes
+  notify: Restart Keepalived
+  changed_when: true
+
+- name: Copy check script
+  template:
+    src: check-ingress.sh.j2
+    dest: /etc/keepalived/check-ingress.sh
+    mode: a+x
+
+- name: enable and start keepalived
+  systemd:
+    name: keepalived
+    state: started
+    enabled: yes

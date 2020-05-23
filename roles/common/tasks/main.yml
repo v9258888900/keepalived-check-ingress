@@ -1,0 +1,2 @@
+- include_tasks: verify-settings.yml
+- include_tasks: prepare-node.yml

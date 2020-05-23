@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: {{ name_sa_for_check }}
+ namespace: {{ ns_for_check }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+ name: list-pods
+ namespace: {{ ns_for_check }}
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+ name: list-pods_{{ name_sa_for_check }}
+ namespace: {{ ns_for_check }}
+roleRef:
+ kind: Role
+ name: list-pods
+ apiGroup: rbac.authorization.k8s.io
+subjects:
+ - kind: ServiceAccount
+   name: {{ name_sa_for_check }}
+   namespace: {{ ns_for_check }}

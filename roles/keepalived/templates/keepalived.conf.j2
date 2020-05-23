@@ -1,0 +1,36 @@
+global_defs {
+    enable_script_security
+}
+vrrp_script chk_ingress {
+    script "{{ path_check_script }}/check-ingress.sh"
+    interval 3
+    rise 3
+    fall 3
+}
+
+vrrp_instance VI_1 {
+    interface {{ hostvars[inventory_hostname]['ansible_default_ipv4']['interface'] }}
+    state MASTER
+    priority {{ priority_num }}
+
+    virtual_router_id {{ hostvars['K8S_TOKEN_HOLDER']['idrouter'] }} 
+    unicast_src_ip {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+    unicast_peer {
+        {% for i in groups['keepalived_node'] %}
+	 {{ hostvars[i]['ansible_default_ipv4']['address'] }}
+	{% endfor %}
+    }
+
+    authentication {
+        auth_type PASS
+        auth_pass GHght54RRerdff
+    }
+
+    track_script {
+        chk_ingress
+    }
+
+    virtual_ipaddress {
+        {{ vip_ipaddress }} dev {{ hostvars[inventory_hostname]['ansible_default_ipv4']['interface'] }}
+    }
+}
